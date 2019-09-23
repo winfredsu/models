@@ -313,7 +313,8 @@ def train(
     if train_metric:
       training_summary["last_train_metrics"] = _float_metric_value(train_metric)
     if test_input_fn:
-      training_summary["eval_metrics"] = _float_metric_value(eval_metric)
+      # eval_metric is supposed to be a float.
+      training_summary["eval_metrics"] = eval_metric
 
     model_training_utils.write_txt_summary(training_summary, model_dir)
 
