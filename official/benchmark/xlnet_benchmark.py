@@ -93,7 +93,7 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
     super(XLNetClassifyAccuracy, self)._setup()
     FLAGS.train_data_size = 25000
     FLAGS.test_data_size = 25024
-    FLAGS.train_batch_size = 32
+    FLAGS.train_batch_size = 16
     FLAGS.seq_len = 512
     FLAGS.reuse_len = 256
     FLAGS.mem_len = 0
@@ -106,7 +106,7 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
     FLAGS.untie_r = True
     FLAGS.n_class = 2
     FLAGS.ff_activation = "gelu"
-    FLAGS.strategy_type = "tpu"
+    FLAGS.strategy_type = "mirror"
     FLAGS.learning_rate = 2e-5
     FLAGS.train_steps = 4000
     FLAGS.warmup_steps = 500
