@@ -72,8 +72,8 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
 
   def _run_and_report_benchmark(self,
                                 training_summary_path,
-                                min_accuracy=0.84,
-                                max_accuracy=0.88):
+                                min_accuracy=0.95,
+                                max_accuracy=0.97):
     """Starts BERT accuracy benchmark test."""
 
     start_time_sec = time.time()
