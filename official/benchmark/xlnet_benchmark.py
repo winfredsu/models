@@ -120,6 +120,8 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
     """Run XLNet model accuracy test with 8 GPUs."""
     self._setup()
     FLAGS.model_dir = self._get_model_dir('benchmark_8_gpu_imdb')
+    # Sets timer_callback to None as we do not use it now.
+    self.timer_callback = None
 
     summary_path = os.path.join(FLAGS.model_dir, 'training_summary.txt')
     self._run_and_report_benchmark(summary_path)
