@@ -65,6 +65,8 @@ def run_evaluation(strategy,
       them when calculating the accuracy. For the reason that there will be
       dynamic-shape tensor, we first collect logits, labels and masks from TPU
       and calculate the accuracy via numpy locally.
+  Returns:
+    A float metric, accuracy.
   """
 
   def _test_step_fn(inputs):
@@ -108,12 +110,14 @@ def run_evaluation(strategy,
             np.argmax(merged_logits[real_index], axis=-1),
             merged_labels[real_index]))
     total += np.shape(real_index)[-1]
+  accuracy = float(correct) / float(total)
   logging.info("Train step: %d  /  acc = %d/%d = %f", step, correct, total,
-               float(correct) / float(total))
+               accuracy)
   if eval_summary_writer:
     with eval_summary_writer.as_default():
       tf.summary.scalar("eval_acc", float(correct) / float(total), step=step)
       eval_summary_writer.flush()
+  return accuracy
 
 
 def get_metric_fn():
