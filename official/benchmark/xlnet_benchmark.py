@@ -112,6 +112,9 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
     FLAGS.warmup_steps = 500
     FLAGS.iterations = 500
     FLAGS.bi_data = False
+    FLAGS.init_checkpoint = self.pretrained_checkpoint_path
+    FLAGS.train_tfrecord_path = self.train_data_path
+    FLAGS.test_tfrecord_path = self.eval_data_path
 
   def benchmark_8_gpu_imdb(self):
     """Run XLNet model accuracy test with 8 GPUs."""
