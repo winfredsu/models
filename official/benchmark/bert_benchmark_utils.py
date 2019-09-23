@@ -100,12 +100,14 @@ class BertBenchmarkBase(tf.test.Benchmark):
     metrics = [{
         'name': 'training_loss',
         'value': stats['train_loss'],
-    }, {
-        'name':
-            'exp_per_second',
-        'value':
-            self.timer_callback.get_examples_per_sec(FLAGS.train_batch_size)
     }]
+    if self.timer_callback:
+      metrics.append({
+          'name':
+              'exp_per_second',
+          'value':
+              self.timer_callback.get_examples_per_sec(FLAGS.train_batch_size)
+      })
 
     if 'eval_metrics' in stats:
       metrics.append({
