@@ -77,7 +77,7 @@ class XLNetClassifyAccuracy(XLNetClassifyBenchmarkBase):
     """Starts BERT accuracy benchmark test."""
 
     start_time_sec = time.time()
-    self.__run_xlnet_classifier()
+    self._run_xlnet_classifier()
     wall_time_sec = time.time() - start_time_sec
 
     with tf.io.gfile.GFile(training_summary_path, 'rb') as reader:
