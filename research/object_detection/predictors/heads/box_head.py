@@ -159,26 +159,52 @@ class ConvolutionalBoxHead(head.Head):
         [batch_size, num_anchors, q, code_size] representing the location of
         the objects, where q is 1 or the number of classes.
     """
+    ## modified by sf
+    batch_norm_params = {
+      'center': True,
+      'scale': True,
+      'decay': 0.997,
+      'epsilon': 0.001,
+      'updates_collections': tf.GraphKeys.UPDATE_OPS,
+    }
+    if self._is_training is not None:
+        batch_norm_params['is_training'] = self._is_training
+    ##
+
     net = features
     if self._use_depthwise:
       box_encodings = slim.separable_conv2d(
           net, None, [self._kernel_size, self._kernel_size],
           padding='SAME', depth_multiplier=1, stride=1,
+	  ## modified by sf
+          #normalizer_fn=None,
+          #normalizer_params=None,
+          normalizer_fn=slim.batch_norm,
+	  normalizer_params=batch_norm_params,
+	  ##
           rate=1, scope='BoxEncodingPredictor_depthwise')
       box_encodings = slim.conv2d(
           box_encodings,
           num_predictions_per_location * self._box_code_size, [1, 1],
           activation_fn=None,
-          normalizer_fn=None,
-          normalizer_params=None,
+	  ## modified by sf
+          #normalizer_fn=None,
+          #normalizer_params=None,
+          normalizer_fn=slim.batch_norm,
+	  normalizer_params=batch_norm_params,
+	  ##
           scope='BoxEncodingPredictor')
     else:
       box_encodings = slim.conv2d(
           net, num_predictions_per_location * self._box_code_size,
           [self._kernel_size, self._kernel_size],
           activation_fn=None,
-          normalizer_fn=None,
-          normalizer_params=None,
+	  ## modified by sf
+          #normalizer_fn=None,
+          #normalizer_params=None,
+          normalizer_fn=slim.batch_norm,
+	  normalizer_params=batch_norm_params,
+	  ##
           scope='BoxEncodingPredictor')
     batch_size = features.get_shape().as_list()[0]
     if batch_size is None:
@@ -203,6 +229,7 @@ class WeightSharedConvolutionalBoxHead(head.Head):
   """
 
   def __init__(self,
+               is_training,
                box_code_size,
                kernel_size=3,
                use_depthwise=False,
@@ -223,6 +250,7 @@ class WeightSharedConvolutionalBoxHead(head.Head):
         num_class_slots].
     """
     super(WeightSharedConvolutionalBoxHead, self).__init__()
+    self._is_training = is_training
     self._box_code_size = box_code_size
     self._kernel_size = kernel_size
     self._use_depthwise = use_depthwise
@@ -245,6 +273,18 @@ class WeightSharedConvolutionalBoxHead(head.Head):
         num_predictions_per_location * box_code_size] representing grid box
         location predictions if self._return_flat_predictions is False.
     """
+    ## modified by sf
+    batch_norm_params = {
+      'center': True,
+      'scale': True,
+      'decay': 0.997,
+      'epsilon': 0.001,
+      'updates_collections': tf.GraphKeys.UPDATE_OPS,
+    }
+    if self._is_training is not None:
+        batch_norm_params['is_training'] = self._is_training
+    ##
+
     box_encodings_net = features
     if self._use_depthwise:
       conv_op = functools.partial(slim.separable_conv2d, depth_multiplier=1)
@@ -255,7 +295,10 @@ class WeightSharedConvolutionalBoxHead(head.Head):
         num_predictions_per_location * self._box_code_size,
         [self._kernel_size, self._kernel_size],
         activation_fn=None, stride=1, padding='SAME',
-        normalizer_fn=None,
+        # modified by sf
+        normalizer_fn=slim.batch_norm,
+        normalizer_params=batch_norm_params,
+        ##
         scope='BoxPredictor')
     batch_size = features.get_shape().as_list()[0]
     if batch_size is None:

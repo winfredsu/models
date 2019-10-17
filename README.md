@@ -17,3 +17,12 @@ If you want to contribute to models, be sure to review the [contribution guideli
 ## License
 
 [Apache License 2.0](LICENSE)
+
+# Modifications for HW-Friendly Quant-Aware-Training
+- In `research/slim`:
+    - modify the bottleneck block and add a resnet18 in `nets/resnet_v1.py`
+- In `research/object_detection`:
+    - add ssd_resnet18_v1_ppn in `builders/model_builder.py`
+    - add batchnorm in detection heads in `predictors/heads/box_heads.py` and `predictors/heads/class_heads.py`
+    - add ssd_resnet18_v1_ppn in `models/ssd_resnet_v1_ppn_feature_extractor.py`, and also fix the depth_multiplier and activation problem
+

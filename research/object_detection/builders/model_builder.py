@@ -71,6 +71,7 @@ SSD_FEATURE_EXTRACTOR_CLASS_MAP = {
     'ssd_resnet50_v1_fpn': ssd_resnet_v1_fpn.SSDResnet50V1FpnFeatureExtractor,
     'ssd_resnet101_v1_fpn': ssd_resnet_v1_fpn.SSDResnet101V1FpnFeatureExtractor,
     'ssd_resnet152_v1_fpn': ssd_resnet_v1_fpn.SSDResnet152V1FpnFeatureExtractor,
+    'ssd_resnet18_v1_ppn': ssd_resnet_v1_ppn.SSDResnet18V1PpnFeatureExtractor, 
     'ssd_resnet50_v1_ppn': ssd_resnet_v1_ppn.SSDResnet50V1PpnFeatureExtractor,
     'ssd_resnet101_v1_ppn':
         ssd_resnet_v1_ppn.SSDResnet101V1PpnFeatureExtractor,
@@ -484,8 +485,7 @@ def _build_faster_rcnn_model(frcnn_config, is_training, add_summaries):
       iou_thresh=frcnn_config.first_stage_nms_iou_threshold,
       max_size_per_class=frcnn_config.first_stage_max_proposals,
       max_total_size=frcnn_config.first_stage_max_proposals,
-      use_static_shapes=use_static_shapes,
-      use_combined_nms=frcnn_config.use_combined_nms_in_first_stage)
+      use_static_shapes=use_static_shapes)
   first_stage_loc_loss_weight = (
       frcnn_config.first_stage_localization_loss_weight)
   first_stage_obj_loss_weight = frcnn_config.first_stage_objectness_loss_weight

@@ -82,6 +82,8 @@ class _SSDResnetPpnFeatureExtractor(ssd_meta_arch.SSDFeatureExtractor):
     self._base_feature_map_depth = base_feature_map_depth
     self._num_layers = num_layers
     self._use_bounded_activations = use_bounded_activations
+    self._override_base_feature_extractor_hyperparams = override_base_feature_extractor_hyperparams
+    self._depth_multiplier = depth_multiplier
 
   def _filter_features(self, image_features):
     # TODO(rathodv): Change resnet endpoint to strip scope prefixes instead
@@ -129,8 +131,8 @@ class _SSDResnetPpnFeatureExtractor(ssd_meta_arch.SSDFeatureExtractor):
     Raises:
       ValueError: depth multiplier is not supported.
     """
-    if self._depth_multiplier != 1.0:
-      raise ValueError('Depth multiplier not supported.')
+    #if self._depth_multiplier != 1.0:
+    #  raise ValueError('Depth multiplier not supported.')
 
     preprocessed_inputs = shape_utils.check_min_image_dim(
         129, preprocessed_inputs)
@@ -149,6 +151,7 @@ class _SSDResnetPpnFeatureExtractor(ssd_meta_arch.SSDFeatureExtractor):
                                            self._pad_to_multiple),
                 num_classes=None,
                 is_training=None,
+                depth_multiplier=self._depth_multiplier,
                 global_pool=False,
                 output_stride=None,
                 store_non_strided_activations=True,
@@ -162,6 +165,46 @@ class _SSDResnetPpnFeatureExtractor(ssd_meta_arch.SSDFeatureExtractor):
                 'image_features': self._filter_features(activations)['block3']
             })
     return feature_maps.values()
+
+class SSDResnet18V1PpnFeatureExtractor(_SSDResnetPpnFeatureExtractor):
+  """PPN Resnet50 v1 Feature Extractor."""
+
+  def __init__(self,
+               is_training,
+               depth_multiplier,
+               min_depth,
+               pad_to_multiple,
+               conv_hyperparams_fn,
+               reuse_weights=None,
+               use_explicit_padding=False,
+               use_depthwise=False,
+               override_base_feature_extractor_hyperparams=False):
+    """Resnet50 v1 Feature Extractor for SSD Models.
+
+    Args:
+      is_training: whether the network is in training mode.
+      depth_multiplier: float depth multiplier for feature extractor.
+      min_depth: minimum feature extractor depth.
+      pad_to_multiple: the nearest multiple to zero pad the input height and
+        width dimensions to.
+      conv_hyperparams_fn: A function to construct tf slim arg_scope for conv2d
+        and separable_conv2d ops in the layers that are added on top of the
+        base feature extractor.
+      reuse_weights: Whether to reuse variables. Default is None.
+      use_explicit_padding: Whether to use explicit padding when extracting
+        features. Default is False.
+      use_depthwise: Whether to use depthwise convolutions. Default is False.
+      override_base_feature_extractor_hyperparams: Whether to override
+        hyperparameters of the base feature extractor with the one from
+        `conv_hyperparams_fn`.
+    """
+
+    super(SSDResnet18V1PpnFeatureExtractor, self).__init__(
+        is_training, depth_multiplier, min_depth, pad_to_multiple,
+        conv_hyperparams_fn, resnet_v1.resnet_v1_18, 'resnet_v1_18',
+        reuse_weights, use_explicit_padding, use_depthwise=use_depthwise,
+        override_base_feature_extractor_hyperparams=
+            override_base_feature_extractor_hyperparams)
 
 
 class SSDResnet50V1PpnFeatureExtractor(_SSDResnetPpnFeatureExtractor):
@@ -199,9 +242,9 @@ class SSDResnet50V1PpnFeatureExtractor(_SSDResnetPpnFeatureExtractor):
     super(SSDResnet50V1PpnFeatureExtractor, self).__init__(
         is_training, depth_multiplier, min_depth, pad_to_multiple,
         conv_hyperparams_fn, resnet_v1.resnet_v1_50, 'resnet_v1_50',
-        reuse_weights, use_explicit_padding, use_depthwise,
-        override_base_feature_extractor_hyperparams=(
-            override_base_feature_extractor_hyperparams))
+        reuse_weights, use_explicit_padding, use_depthwise=use_depthwise,
+        override_base_feature_extractor_hyperparams=
+            override_base_feature_extractor_hyperparams)
 
 
 class SSDResnet101V1PpnFeatureExtractor(_SSDResnetPpnFeatureExtractor):
