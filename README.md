@@ -25,4 +25,6 @@ If you want to contribute to models, be sure to review the [contribution guideli
     - add ssd_resnet18_v1_ppn in `builders/model_builder.py`
     - add batchnorm in detection heads in `predictors/heads/box_heads.py` and `predictors/heads/class_heads.py`
     - add ssd_resnet18_v1_ppn in `models/ssd_resnet_v1_ppn_feature_extractor.py`, and also fix the depth_multiplier and activation problem
-
+- In `research/deeplab`:
+    - modify the `zero_mean_unit_range` preprocess method in `core/feature_extractor.py` (change the original preprocessed range [-1,1] to [-1,1))
+ 

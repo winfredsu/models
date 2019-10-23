@@ -421,7 +421,7 @@ def extract_features(images,
       # for backward compatibility.
       batch_norm_params = {
           'is_training': is_training and fine_tune_batch_norm,
-          'decay': 0.9997,
+          'decay': 0.99,
           'epsilon': 1e-5,
           'scale': True,
       }
@@ -571,7 +571,8 @@ def _get_logits(images,
     outputs_to_logits[output] = get_branch_logits(
         features,
         model_options.outputs_to_num_classes[output],
-        model_options.atrous_rates,
+        is_training=is_training,
+        atrous_rates=model_options.atrous_rates,
         aspp_with_batch_norm=model_options.aspp_with_batch_norm,
         kernel_size=model_options.logits_kernel_size,
         weight_decay=weight_decay,
@@ -704,6 +705,7 @@ def refine_by_decoder(features,
 
 def get_branch_logits(features,
                       num_classes,
+                      is_training=False,
                       atrous_rates=None,
                       aspp_with_batch_norm=False,
                       kernel_size=1,
@@ -732,6 +734,12 @@ def get_branch_logits(features,
   Raises:
     ValueError: Upon invalid input kernel_size value.
   """
+  batch_norm_params = {
+          'is_training': is_training,
+          'decay': 0.99,
+          'epsilon': 1e-5,
+          'scale': True,
+  }
   # When using batch normalization with ASPP, ASPP has been applied before
   # in extract_features, and thus we simply apply 1x1 convolution here.
   if aspp_with_batch_norm or atrous_rates is None:
@@ -759,7 +767,8 @@ def get_branch_logits(features,
                 kernel_size=kernel_size,
                 rate=rate,
                 activation_fn=None,
-                normalizer_fn=None,
+                normalizer_fn=slim.batch_norm,
+                normalizer_params=batch_norm_params,
                 scope=scope))
 
       return tf.add_n(branch_logits)

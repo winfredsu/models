@@ -193,7 +193,7 @@ def _preprocess_subtract_imagenet_mean(inputs, dtype=tf.float32):
 
 def _preprocess_zero_mean_unit_range(inputs, dtype=tf.float32):
   """Map image values from [0, 255] to [-1, 1]."""
-  preprocessed_inputs = (2.0 / 255.0) * tf.to_float(inputs) - 1.0
+  preprocessed_inputs = (2.0 / 256.0) * tf.to_float(inputs) - 1.0
   return tf.cast(preprocessed_inputs, dtype=dtype)
 
 
